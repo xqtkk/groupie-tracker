@@ -1,22 +1,17 @@
-* {
-    text-decoration: none;
-    color: black;
-}
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
+:root{--ink:#181a19;--muted:#737a75;--paper:#f6f6f1;--card:#fff;--line:#e5e6df;--green:#28684e;--sans:'DM Sans',Arial,sans-serif;--display:'Space Grotesk',var(--sans)}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}.site-header{height:82px;padding:0 max(6vw,24px);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}.brand{display:inline-flex;align-items:center;gap:11px;color:var(--ink);text-decoration:none;font:700 21px var(--display);letter-spacing:-.7px}.brand em{font-family:Georgia,serif;color:var(--green);font-weight:400}.brand-mark{width:36px;height:36px;display:grid;place-items:center;border-radius:11px;background:var(--green);color:white;font:700 21px Georgia,serif}.back-link,.back-mobile{color:var(--green);font-size:13px;text-decoration:none}.back-link:hover,.back-mobile:hover{text-decoration:underline}.page-shell{width:min(1180px,88vw);margin:0 auto}.artist-hero{position:relative;min-height:390px;margin:46px 0 21px;overflow:hidden;display:flex;align-items:flex-end;background:#1c2924;border-radius:18px}.artist-cover{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.58;filter:saturate(.75)}.artist-hero:after{position:absolute;inset:0;content:"";background:linear-gradient(90deg,#132019e8 0%,#13201995 47%,#13201920 100%),linear-gradient(0deg,#13201970,transparent 70%)}.artist-title{position:relative;z-index:1;padding:48px 52px;color:#fff}.artist-title .eyebrow{margin:0 0 13px;color:#c9ef82;font-size:10px;font-weight:700;letter-spacing:2px}.artist-title h1{margin:0 0 22px;font:600 clamp(43px,7vw,78px)/.98 var(--display);letter-spacing:-4px}.artist-facts{display:flex;flex-wrap:wrap;gap:9px}.artist-facts span{padding:9px 12px;border:1px solid #ffffff36;border-radius:8px;background:#ffffff12;color:#fff;font-size:12px}.artist-facts strong{margin-left:4px;font-weight:600}.detail-grid{display:grid;grid-template-columns:minmax(260px,.8fr) minmax(0,1.2fr);gap:20px;margin-bottom:76px}.detail-card{padding:27px 29px;background:var(--card);border:1px solid var(--line);border-radius:15px}.section-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:21px}.eyebrow{margin:0 0 7px;color:var(--green);font-size:9px;font-weight:700;letter-spacing:1.8px}.section-heading h2{margin:0;font:600 22px var(--display);letter-spacing:-.7px}.count-pill{min-width:31px;height:29px;padding:0 8px;display:grid;place-items:center;background:#edf3e9;border-radius:99px;color:var(--green);font-size:12px;font-weight:700}.member-list{margin:0;padding:0;list-style:none}.member-list li{min-height:47px;display:flex;align-items:center;gap:14px;border-top:1px solid #eff0eb;font-size:13px}.member-number{color:#98a099;font:11px var(--display)}.concert-list{border-top:1px solid #eff0eb}.concert-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid #eff0eb}.concert-row h3{margin:0 0 4px;font-size:13px;font-weight:600}.location-code{margin:0;color:#959b95;font:10px var(--sans)}.concert-dates{max-width:52%;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px}.concert-dates span{padding:6px 8px;background:#f3f5ef;border-radius:6px;color:#52635a;font-size:10px;white-space:nowrap}.muted{color:var(--muted);font-size:13px}.site-footer{min-height:75px;padding:20px max(6vw,24px);display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);color:var(--muted);font-size:11px}.site-footer span:first-child{color:var(--green);font-weight:700;letter-spacing:1.5px}.back-mobile{display:none}.error-card{width:min(620px,calc(100% - 36px));margin:12vh auto;padding:48px;background:#fff;border:1px solid var(--line);border-radius:18px}.error-card h1{margin:0;color:var(--green);font:600 72px var(--display)}.error-card h2{margin:9px 0 28px;font:500 18px var(--sans)}.home-button{display:inline-block;padding:12px 17px;border-radius:8px;background:var(--green);color:#fff;text-decoration:none;font-size:13px}
+@media(max-width:760px){.site-header{height:68px}.page-shell{width:min(100% - 32px,560px)}.back-link{display:none}.back-mobile{display:inline-block;margin-top:20px}.artist-hero{min-height:390px;margin:18px 0 15px}.artist-title{padding:27px}.artist-title h1{letter-spacing:-2px}.artist-facts{gap:6px}.artist-facts span{padding:8px;font-size:10px}.detail-grid{grid-template-columns:1fr;gap:13px;margin-bottom:48px}.detail-card{padding:22px}.section-heading h2{font-size:20px}.site-footer{padding:18px;font-size:10px}.error-card{margin:10vh auto;padding:31px 24px}}
 
-header {
-    width: 100%;
-    text-align: center;
-    top: 0;
-}
-
-main {
-    width: 50%;
-    display: flex;
-    justify-content: center;
-}
-
-img {
-    border-radius: 100%;
-    margin: 15px 10px 5px 20px;
-    align-items: center;
-}
+.map-section { margin: 0 0 76px; }
+.map-section .section-heading { margin-bottom: 12px; }
+.map-button { padding: 10px 14px; border: 0; border-radius: 8px; background: var(--green); color: #fff; font: 600 12px var(--sans); cursor: pointer; }
+.map-button:hover:not(:disabled) { background: #1f543e; }
+.map-button:disabled { opacity: .6; cursor: wait; }
+.map-status { min-height: 20px; margin: 0 0 12px; color: var(--muted); font-size: 12px; }
+.concert-map { width: 100%; height: 390px; overflow: hidden; border: 1px solid var(--line); border-radius: 11px; background: #edf0e8; }
+.concert-map[hidden] { display: none; }
+.map-credit { margin: 10px 0 0; color: var(--muted); font-size: 10px; }
+.map-credit a { color: var(--green); }
+.leaflet-popup-content { font-family: var(--sans); font-size: 12px; line-height: 1.5; }
+.leaflet-popup-content ul { margin: 5px 0 0; padding-left: 17px; }
+@media (max-width: 760px) { .map-section { margin-bottom: 48px; } .concert-map { height: 320px; } .map-section .section-heading { align-items: flex-start; gap: 12px; } }

@@ -1,20 +1,34 @@
 package web
 
 import (
+	"bytes"
 	"embed"
+	"encoding/json"
+	"html/template"
 	"log"
 	"net/http"
-	"text/template"
+	"os"
+	"strings"
+	"sync"
+	"time"
 )
 
 type Application struct {
-	errorLog *log.Logger
-	infoLog  *log.Logger
-	Config   Config
+	errorLog      *log.Logger
+	infoLog       *log.Logger
+	Config        Config
+	httpClient    *http.Client
+	geocoder      *Geocoder
+	cacheMu       sync.Mutex
+	cachedArtists []Artist
+	cacheUntil    time.Time
 }
 
 type Config struct {
-	ArtistsURL string
+	ArtistsURL  string
+	APIBaseURL  string
+	GeocoderURL string
+	TileURL     string
 }
 
 type ApplicationError struct {
@@ -23,20 +37,41 @@ type ApplicationError struct {
 }
 
 func NewApplication(errorLog, infoLog *log.Logger) *Application {
-	return &Application{
+	apiBaseURL := os.Getenv("GROUPIE_API_BASE_URL")
+	if apiBaseURL == "" {
+		apiBaseURL = "https://groupietrackers.herokuapp.com/api"
+	}
+	geocoderURL := os.Getenv("GROUPIE_GEOCODER_URL")
+	if geocoderURL == "" {
+		geocoderURL = "https://nominatim.openstreetmap.org/search"
+	}
+	tileURL := os.Getenv("GROUPIE_MAP_TILE_URL")
+	if tileURL == "" {
+		tileURL = "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+	}
+	app := &Application{
 		errorLog: errorLog,
 		infoLog:  infoLog,
 		Config: Config{
-			ArtistsURL: "https://groupietrackers.herokuapp.com/api/artists",
+			ArtistsURL:  strings.TrimRight(apiBaseURL, "/") + "/artists",
+			APIBaseURL:  strings.TrimRight(apiBaseURL, "/"),
+			GeocoderURL: geocoderURL,
+			TileURL:     tileURL,
 		},
+		httpClient: &http.Client{Timeout: 12 * time.Second},
 	}
+	app.geocoder = NewGeocoder(app.Config.GeocoderURL)
+	return app
 }
 
 func NewServer(addr *string, errorLog *log.Logger, mux *http.ServeMux) *http.Server {
 	return &http.Server{
-		Addr:     *addr,
-		ErrorLog: errorLog,
-		Handler:  mux,
+		Addr:         *addr,
+		ErrorLog:     errorLog,
+		Handler:      mux,
+		ReadTimeout:  30 * time.Second,
+		WriteTimeout: 90 * time.Second,
+		IdleTimeout:  120 * time.Second,
 	}
 }
 
@@ -49,7 +84,20 @@ var (
 )
 
 func init() {
-	templates, err = template.ParseFS(fs, "templates/*.html")
+	funcs := template.FuncMap{
+		"add": func(a, b int) int { return a + b },
+		"json": func(value any) string {
+			encoded, _ := json.Marshal(value)
+			return string(encoded)
+		},
+		"albumYear": firstAlbumYear,
+		"humanize": func(value string) string {
+			value = strings.NewReplacer("_", " ", "-", ", ").Replace(value)
+			return strings.Title(value)
+		},
+		"trimDate": func(value string) string { return strings.TrimLeft(value, "*") },
+	}
+	templates, err = template.New("pages").Funcs(funcs).ParseFS(fs, "templates/*.html")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -73,16 +121,20 @@ func (app *Application) BadRequest(w http.ResponseWriter) {
 }
 
 func (app *Application) MethodNotAllowed(w http.ResponseWriter) {
+	w.Header().Set("Allow", http.MethodGet)
 	app.ClientError(w, http.StatusMethodNotAllowed)
 }
 
 func (app *Application) Errors(w http.ResponseWriter, errorMessage string, errorCode int) {
-	w.WriteHeader(errorCode)
-
-	if err := templates.ExecuteTemplate(w, "error.html",ApplicationError{
+	buf := new(bytes.Buffer)
+	if err := templates.ExecuteTemplate(buf, "error.html", ApplicationError{
 		Message: errorMessage,
 		Code:    errorCode,
 	}); err != nil {
-		http.Error(w, "internal Server Error", http.StatusInternalServerError)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
 	}
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(errorCode)
+	buf.WriteTo(w)
 }

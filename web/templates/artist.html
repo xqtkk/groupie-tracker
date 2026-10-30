@@ -1,30 +1,55 @@
-<title>{{.Name}}</title>
-
-<link rel="stylesheet" href="../../ui/artist.css">
-
-<header>
-    <a href="/">
-        <h1>GROUPIE TRACKER</h1>
-    </a>
-</header>
-
-<main>
-    <div>
-        <img src="{{.Image}}" alt="Изображение">
-    </div>
-    <div>
-        <p>CreationDate: {{.CreationDate}}</p>
-        <p>FirstAlbum: {{.FirstAlbum}}</p>
-        <details>
-            <summary>Members:</summary>
-            <ul>{{range .Members}}<li>{{.}}</li>{{end}}</ul>
-        </details>
-        <details>
-            <summary>Concerts:</summary>
-            {{range $key, $value := .Relations}}
-            Location: {{$key}}
-            <ul>{{range $value}}<li>{{.}}</li>{{end}}</ul>
-            {{end}}
-        </details>
-    </div>
-</main>
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{.Name}} — Groupie Tracker</title>
+    <link rel="stylesheet" href="/ui/artist.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" defer></script>
+    <script src="/ui/map.js" defer></script>
+</head>
+<body>
+    <header class="site-header">
+        <a class="brand" href="/" aria-label="Groupie Tracker home"><span class="brand-mark">G</span><span>Groupie <em>Tracker</em></span></a>
+        <a class="back-link" href="/">← All artists</a>
+    </header>
+    <main class="page-shell">
+        <a class="back-mobile" href="/">← Back to artists</a>
+        <section class="artist-hero">
+            <img class="artist-cover" src="{{.Image}}" alt="{{.Name}}">
+            <div class="artist-title">
+                <p class="eyebrow">ARTIST PROFILE · {{printf "%02d" .ID}}</p>
+                <h1>{{.Name}}</h1>
+                <div class="artist-facts"><span>Formed <strong>{{.CreationDate}}</strong></span><span>First album <strong>{{.FirstAlbum}}</strong></span><span><strong>{{len .Members}}</strong> members</span><span><strong>{{len .Locations}}</strong> locations</span><span><strong>{{len .Dates}}</strong> listed dates</span></div>
+            </div>
+        </section>
+        <div class="detail-grid">
+            <section class="detail-card members-card">
+                <div class="section-heading"><div><p class="eyebrow">THE LINEUP</p><h2>Band members</h2></div><span class="count-pill">{{len .Members}}</span></div>
+                <ol class="member-list">{{range $i, $member := .Members}}<li><span class="member-number">{{printf "%02d" (add $i 1)}}</span><span>{{$member}}</span></li>{{end}}</ol>
+            </section>
+            <section class="detail-card concerts-card">
+                <div class="section-heading"><div><p class="eyebrow">ON THE ROAD</p><h2>Concert locations</h2></div><span class="count-pill">{{len .Concerts}}</span></div>
+                {{if .Concerts}}
+                <div class="concert-list">
+                    {{range .Concerts}}
+                    <article class="concert-row"><div><h3>{{humanize .Location}}</h3><p class="location-code">{{.Location}}</p></div><div class="concert-dates">{{if .Dates}}{{range .Dates}}<span>{{trimDate .}}</span>{{end}}{{else}}<span>Date unavailable</span>{{end}}</div></article>
+                    {{end}}
+                </div>
+                {{else}}<p class="muted">No concert information is available for this artist.</p>{{end}}
+            </section>
+        </div>
+        <section class="detail-card map-section" aria-labelledby="map-heading">
+            <div class="section-heading">
+                <div><p class="eyebrow">TOUR MAP</p><h2 id="map-heading">Concert map</h2></div>
+                <button class="map-button" id="load-map" type="button" data-artist-id="{{.ID}}">Show locations</button>
+            </div>
+            <p class="map-status" id="map-status" role="status">Load the concert locations on the map.</p>
+            <div class="concert-map" id="concert-map" data-map-tiles="{{.TileURL}}" hidden></div>
+            <p class="map-credit">Geocoding and map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors</a>.</p>
+        </section>
+    </main>
+    <footer class="site-footer"><span>GROUPIE TRACKER</span><span>Artist data from the Groupie Trackers API</span></footer>
+</body>
+</html>

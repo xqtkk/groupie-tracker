@@ -1,47 +1,52 @@
-## groupie-tracker
+# Groupie Tracker
 
-### Objectives
+A small Go web app for exploring artists, their members, albums, and concert locations. It uses the Groupie Trackers API and renders a responsive artist directory and detail pages.
 
-Groupie Trackers consists on receiving a given API and manipulate the data contained in it, in order to create a site, displaying the information.
+## Features
 
-- [API](https://groupietrackers.herokuapp.com/api) consists in four parts:
+- Browse a simple artist directory with circular icons and names; open a profile for the full details.
+- Search artists, members, album dates, formation years, and concert locations with type-labeled suggestions.
+- Filter by formation year, first-album year, member count, and one or more concert locations.
+- Open an artist profile with member information and concert dates grouped by location.
+- Load an interactive concert map with geocoded markers.
+- Load artist, location, date, and relation data from the API, with a 15-minute in-memory cache.
+- Keep serving the last successful catalog if the upstream API is temporarily unavailable.
+- Handle invalid routes, IDs, and HTTP methods with clear error pages.
 
-  - The first one, `artists`, containing information about some bands and artists like their name(s), image, in which year they began their activity, the date of their first album and the members.
+## Requirements
 
-  - The second one, `locations`, consists in their last and/or upcoming concert locations.
+- Go 1.20 or later
+- Internet access to load data from the Groupie Trackers API
 
-  - The third one, `dates`, consists in their last and/or upcoming concert dates.
+The application uses only Go standard-library packages.
+The interactive map uses Leaflet from its pinned CDN release and OpenStreetMap tiles.
 
-  - And the last one, `relation`, does the link between all the other parts, `artists`, `dates` and `locations`.
+## Run
 
-### Instructions
+From the project directory:
 
-- open terminal with `Ctrl + Alt + T`
-- clone the repo with this command `git clone git@git.01.alem.school:aserikbay/groupie-tracker.git`
-```console
-student@ALEM:~$ git clone git@git.01.alem.school:aserikbay/groupie-tracker.git
+```powershell
+go run ./cmd
 ```
-- enter the folder with command `cd groupie-tracker/`
-```console
-student@ALEM:~$ cd groupie-tracker/
-```
-- run the program `go run .`
-```console
-student@ALEM:~$ go run .
-```
-- if you want change the port add `-addr :PORT` flag, like this `go run . -addr :8080` 
-- follow the [link](http://localhost:4000/) on terminal
 
-### Unit-Testing
+Then open [http://localhost:4000](http://localhost:4000).
 
-- if you want to run unit-testing write this `go test`
-```console
-student@ALEM:~$ go test
-```
-- and you can add `-v`, like this `go test -v`
-```console
-student@ALEM:~$ go test -v
-```
-### Notes
+To use another address or port:
 
-- 
+```powershell
+go run ./cmd -addr :8080
+```
+
+## Data source
+
+Artist information comes from the [Groupie Trackers API](https://groupietrackers.herokuapp.com/api). The app requests the artists, locations, dates, and relation endpoints and combines their records by artist ID.
+
+The map geocodes concert locations through OpenStreetMap Nominatim only after the visitor asks to show the map. Requests are serialized and cached in memory to respect the public service's usage limits. The map shows OpenStreetMap attribution.
+
+You can switch service URLs without changing source code:
+
+```powershell
+$env:GROUPIE_API_BASE_URL = 'https://groupietrackers.herokuapp.com/api'
+$env:GROUPIE_GEOCODER_URL = 'https://nominatim.openstreetmap.org/search'
+$env:GROUPIE_MAP_TILE_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
+```

@@ -1,20 +1,72 @@
-<title>Groupie Tracker</title>
-
-<link rel="stylesheet" href="../../ui/home.css">
-
-<header>
-    <a href="/">
-        <h1>GROUPIE TRACKER</h1>
-    </a>
-</header>
-
-<main>
-    {{range .}}
-    <a href="/artist?id={{.Id}}">
-        <div class="gallery-item">
-            <img src="{{.Image}}" alt="Изображение">
-            <h3>{{.Name}}</h3>
-        </div>
-    </a>
-    {{end}}
-</main>
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Explore artists, band members, albums and concert locations.">
+    <title>Groupie Tracker — Artists</title>
+    <link rel="stylesheet" href="/ui/home.css">
+    <script src="/ui/app.js" defer></script>
+</head>
+<body>
+    <header class="site-header">
+        <a class="brand" href="/" aria-label="Groupie Tracker home"><span class="brand-mark">G</span><span>Groupie <em>Tracker</em></span></a>
+        <span class="header-note">Music, members &amp; live dates</span>
+    </header>
+    <main class="page-shell">
+        <section class="intro">
+            <p class="eyebrow">THE ARTIST INDEX</p>
+            <h1>Find your next favorite.</h1>
+            <p class="intro-copy">Explore the artists, the people behind the music, and where they have played.</p>
+            <div class="search-area">
+                <label class="search-box">
+                    <span class="search-icon" aria-hidden="true">⌕</span>
+                    <input id="artist-search" type="search" placeholder="Search artists, members, albums or locations" autocomplete="off" aria-label="Search artists" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="search-suggestions">
+                </label>
+                <div id="search-suggestions" class="suggestions" role="listbox" hidden></div>
+            </div>
+            <details class="filter-panel">
+                <summary>Filter artists <span aria-hidden="true">＋</span></summary>
+                <div class="filter-content">
+                    <fieldset class="range-filter">
+                        <legend>Formation year</legend>
+                        <label>From <input class="filter-number" id="creation-min" type="number" min="{{.MinCreationYear}}" max="{{.MaxCreationYear}}" placeholder="{{.MinCreationYear}}"></label>
+                        <label>To <input class="filter-number" id="creation-max" type="number" min="{{.MinCreationYear}}" max="{{.MaxCreationYear}}" placeholder="{{.MaxCreationYear}}"></label>
+                    </fieldset>
+                    <fieldset class="range-filter">
+                        <legend>First album year</legend>
+                        <label>From <input class="filter-number" id="album-min" type="number" min="{{.MinAlbumYear}}" max="{{.MaxAlbumYear}}" placeholder="{{.MinAlbumYear}}"></label>
+                        <label>To <input class="filter-number" id="album-max" type="number" min="{{.MinAlbumYear}}" max="{{.MaxAlbumYear}}" placeholder="{{.MaxAlbumYear}}"></label>
+                    </fieldset>
+                    <fieldset class="range-filter">
+                        <legend>Number of members</legend>
+                        <label>From <input class="filter-number" id="members-min" type="number" min="{{.MinMemberCount}}" max="{{.MaxMemberCount}}" placeholder="{{.MinMemberCount}}"></label>
+                        <label>To <input class="filter-number" id="members-max" type="number" min="{{.MinMemberCount}}" max="{{.MaxMemberCount}}" placeholder="{{.MaxMemberCount}}"></label>
+                    </fieldset>
+                    <fieldset class="location-filter">
+                        <legend>Concert locations</legend>
+                        <input id="location-search" type="search" placeholder="Find a place" aria-label="Find a concert location">
+                        <div class="location-options" id="location-options">
+                            {{range .Locations}}
+                            <label class="location-option"><input type="checkbox" value="{{.}}"><span>{{humanize .}}</span></label>
+                            {{end}}
+                        </div>
+                    </fieldset>
+                    <button class="clear-filters" id="clear-filters" type="button">Clear filters</button>
+                </div>
+            </details>
+            <p id="result-count" class="result-count" aria-live="polite">{{len .Artists}} artists</p>
+        </section>
+        <section class="artist-grid" id="artist-grid" aria-label="Artists">
+            {{range .Artists}}
+            <a class="artist-card" href="/artist?id={{.ID}}" data-name="{{.Name}}" data-members="{{json .Members}}" data-creation="{{.CreationDate}}" data-album="{{.FirstAlbum}}" data-album-year="{{albumYear .FirstAlbum}}" data-member-count="{{len .Members}}" data-locations="{{json .Locations}}">
+                <img class="artist-icon" src="{{.Image}}" alt="" loading="lazy">
+                <h2>{{.Name}}</h2>
+            </a>
+            {{end}}
+        </section>
+        <p id="empty-state" class="empty-state" hidden>No artists match your search. Try another name, member or place.</p>
+    </main>
+    <footer class="site-footer"><span>GROUPIE TRACKER</span><span>Built for curious music fans</span></footer>
+</body>
+</html>

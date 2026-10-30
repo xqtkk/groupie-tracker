@@ -1,18 +1,13 @@
-<title>{{.Message}}</title>
-
-<link rel="stylesheet" href="../../ui/error.css">
-
-<header>
-    <a href="/">
-        <h1>GROUPIE TRACKER</h1>
-    </a>
-</header>
-
-<main>
-    <div>
-        <h1>{{.Code}}</h1>
-    <div>
-    <div>
-        <h2>{{.Message}}</h2>
-    </div>
-</main>
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{.Code}} — Groupie Tracker</title>
+    <link rel="stylesheet" href="/ui/error.css">
+</head>
+<body>
+    <header class="site-header"><a class="brand" href="/"><span class="brand-mark">G</span><span>Groupie <em>Tracker</em></span></a></header>
+    <main class="error-card"><p class="eyebrow">SOMETHING WENT WRONG</p><h1>{{.Code}}</h1><h2>{{.Message}}</h2><a class="home-button" href="/">Back to artists</a></main>
+</body>
+</html>
